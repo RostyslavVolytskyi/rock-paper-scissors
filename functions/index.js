@@ -33,6 +33,8 @@ const FALLBACK_PHRASES = [
 
 const USER_NAME_CONTEXT = 'username_context';
 const USERNAME_ARGUMENT = 'given-name';
+const HERONAME_ARGUMENT = 'Hero';
+
 
 function getRandomPhrase(arr) {
     return arr[Math.floor(Math.random()*arr.length)];
@@ -65,11 +67,11 @@ exports.rockPaperScissors = functions.https.onRequest((request, response) => {
             .addSimpleResponse(`Ok, ${username}, now choose with whom You want to play. Cosmic Bug and Fluffy Worm are waiting for You. Play carefully with them, they are very cunning!`)
             .addSuggestions([IMAGES.hero1.heroName, IMAGES.hero2.heroName]),
             app.buildCarousel()
-                .addItems(app.buildOptionItem('COSMIC_BUG',
+                .addItems(app.buildOptionItem('Cosmic Bug',
                     ['cosmic', 'bug', 'buggy', 'cosmic bug'])
                     .setTitle(IMAGES.hero1.heroName)
                     .setImage(IMAGES.hero1.url, IMAGES.hero1.heroName))
-                .addItems(app.buildOptionItem('FLUFFY_WORM',
+                .addItems(app.buildOptionItem('Fluffy Worm',
                     ['fluffy', 'worm', 'fluffy worm'])
                     .setTitle(IMAGES.hero2.heroName)
                     .setImage(IMAGES.hero2.url, IMAGES.hero2.heroName)
@@ -78,18 +80,34 @@ exports.rockPaperScissors = functions.https.onRequest((request, response) => {
     }
 
     function heroSelection (app) {
-        const param = app.getSelectedOption();
-        const username = app.getContextArgument(USER_NAME_CONTEXT, USERNAME_ARGUMENT).value;
+        let username;
 
-        if (!param) {
+        // from context
+        if (app.getContextArgument(USER_NAME_CONTEXT, USERNAME_ARGUMENT)) {
+            username = app.getContextArgument(USER_NAME_CONTEXT, USERNAME_ARGUMENT).value;
+        }
+
+        let heroName = app.getSelectedOption();
+
+        if (!heroName) {
+            // from user
+            heroName = app.getArgument(HERONAME_ARGUMENT);
+        }
+
+        if (heroName === 'Cosmic Bug' && username) {
+            app.ask(`Aha, ${username}, this is ${heroName}. Let's see who has sharper mind! I trained a lot! So, what is your shoot?`);
+        }
+
+        if (heroName === 'Fluffy Worm' && username) {
+            app.ask(`Hi ${username}, this is ${heroName}. Lets play with you. To be continued.`);
+        }
+
+        if (!heroName) {
             app.ask('You did not select any hero from the list or carousel');
-        } else if (param === 'COSMIC_BUG') {
-            app.ask(`Aha, ${username}. Let's see who has sharper mind! I trained a lot! So, what is your shoot?`);
-        } else if (param === 'FLUFFY_WORM') {
-            app.ask(`Hi ${username}, lets play with you. To be continued.`);
         } else {
             app.ask('You selected an unknown item from the list or carousel');
         }
+
     }
 
     function noInput (app) {
