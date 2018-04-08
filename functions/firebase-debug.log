@@ -1,34 +1,34 @@
-[debug] [2018-04-06T18:56:28.521Z] ----------------------------------------------------------------------
-[debug] [2018-04-06T18:56:28.523Z] Command:       /usr/local/bin/node /usr/local/bin/firebase serve --only functions
-[debug] [2018-04-06T18:56:28.523Z] CLI Version:   3.17.7
-[debug] [2018-04-06T18:56:28.523Z] Platform:      darwin
-[debug] [2018-04-06T18:56:28.523Z] Node Version:  v8.9.0
-[debug] [2018-04-06T18:56:28.524Z] Time:          Fri Apr 06 2018 20:56:28 GMT+0200 (CEST)
-[debug] [2018-04-06T18:56:28.524Z] ----------------------------------------------------------------------
+[debug] [2018-04-08T08:33:58.859Z] ----------------------------------------------------------------------
+[debug] [2018-04-08T08:33:58.861Z] Command:       /usr/local/bin/node /usr/local/bin/firebase serve --only functions
+[debug] [2018-04-08T08:33:58.861Z] CLI Version:   3.17.7
+[debug] [2018-04-08T08:33:58.861Z] Platform:      darwin
+[debug] [2018-04-08T08:33:58.861Z] Node Version:  v8.9.0
+[debug] [2018-04-08T08:33:58.862Z] Time:          Sun Apr 08 2018 10:33:58 GMT+0200 (CEST)
+[debug] [2018-04-08T08:33:58.862Z] ----------------------------------------------------------------------
 [debug] 
-[debug] [2018-04-06T18:56:28.534Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
-[debug] [2018-04-06T18:56:28.535Z] > authorizing via signed-in user
-[debug] [2018-04-06T18:56:28.536Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/rock-paper-scissors-d9968  
+[debug] [2018-04-08T08:33:58.871Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2018-04-08T08:33:58.871Z] > authorizing via signed-in user
+[debug] [2018-04-08T08:33:58.873Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/rock-paper-scissors-d9968  
   
- Fri Apr 06 2018 20:56:28 GMT+0200 (CEST)
-[debug] [2018-04-06T18:56:29.440Z] <<< HTTP RESPONSE 200
-[debug] [2018-04-06T18:56:29.440Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/rock-paper-scissors-d9968/tokens  
+ Sun Apr 08 2018 10:33:58 GMT+0200 (CEST)
+[debug] [2018-04-08T08:34:00.122Z] <<< HTTP RESPONSE 200
+[debug] [2018-04-08T08:34:00.122Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/rock-paper-scissors-d9968/tokens  
   
- Fri Apr 06 2018 20:56:29 GMT+0200 (CEST)
-[debug] [2018-04-06T18:56:30.152Z] <<< HTTP RESPONSE 200
-[debug] [2018-04-06T18:56:30.153Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/rock-paper-scissors-d9968  
+ Sun Apr 08 2018 10:34:00 GMT+0200 (CEST)
+[debug] [2018-04-08T08:34:00.935Z] <<< HTTP RESPONSE 200
+[debug] [2018-04-08T08:34:00.936Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/rock-paper-scissors-d9968  
   
- Fri Apr 06 2018 20:56:30 GMT+0200 (CEST)
-[debug] [2018-04-06T18:56:31.075Z] <<< HTTP RESPONSE 200
+ Sun Apr 08 2018 10:34:00 GMT+0200 (CEST)
+[debug] [2018-04-08T08:34:01.857Z] <<< HTTP RESPONSE 200
 [info] 
 [info] === Serving from '/Users/rostyslav/projects/dialogflow/rock-paper-scissors'...
 [info] 
 [info] i  functions: Preparing to emulate functions.
-[debug] [2018-04-06T18:56:31.439Z] Fetching environment
-[debug] [2018-04-06T18:56:31.441Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/195896698283:getServerAppConfig  
+[debug] [2018-04-08T08:34:02.190Z] Fetching environment
+[debug] [2018-04-08T08:34:02.192Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/195896698283:getServerAppConfig  
   
- Fri Apr 06 2018 20:56:31 GMT+0200 (CEST)
-[debug] [2018-04-06T18:56:32.099Z] <<< HTTP RESPONSE 200
-[debug] [2018-04-06T18:56:32.099Z] Starting @google-cloud/functions-emulator
-[debug] [2018-04-06T18:56:33.139Z] Parsing function triggers
+ Sun Apr 08 2018 10:34:02 GMT+0200 (CEST)
+[debug] [2018-04-08T08:34:02.881Z] <<< HTTP RESPONSE 200
+[debug] [2018-04-08T08:34:02.882Z] Starting @google-cloud/functions-emulator
+[debug] [2018-04-08T08:34:03.920Z] Parsing function triggers
 [info] ✔  functions: rockPaperScissors: http://localhost:5000/rock-paper-scissors-d9968/us-central1/rockPaperScissors
