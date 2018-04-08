@@ -10,6 +10,7 @@ const USERNAME_ACTION = 'user.name';
 const DEFAULT_FALLBACK = 'input.unknown';
 const NO_INPUT_EVENT = 'no.input';
 const HERO_SELECTION = 'hero.touch';
+const CANCEL_EVENT = 'say.bye';
 
 
 const IMAGES = {
@@ -132,6 +133,10 @@ exports.rockPaperScissors = functions.https.onRequest((request, response) => {
         }
     }
 
+    function sayBye (app) {
+        app.tell(`Okay, let's try this again later. You have some time for training. Heroes are waiting for you.`);
+    }
+
 
     let actionMap = new Map();
     actionMap.set(WELCOME_INTENT, welcomeIntentQuestion);
@@ -140,6 +145,7 @@ exports.rockPaperScissors = functions.https.onRequest((request, response) => {
 
     actionMap.set(DEFAULT_FALLBACK, defaultFallback);
     actionMap.set(NO_INPUT_EVENT, noInput);
+    actionMap.set(CANCEL_EVENT, sayBye);
 
     app.handleRequest(actionMap);
 });
