@@ -8,6 +8,8 @@ const {imagesInfo} = require('./config');
 const {fallbackPhrases} = require('./config');
 const {getRandomItem} = require('./utils');
 const {getRandomHeroShoot} = require('./utils');
+const {setScore} = require('./utils');
+const {clearScore} = require('./utils');
 
 const WELCOME_INTENT = 'input.welcome';
 const USERNAME_ACTION = 'user.name';
@@ -23,6 +25,7 @@ const HERONAME_ARGUMENT = 'Hero';
 const USER_SHOOT_ARGUMENT = 'UserShoot';
 
 let heroName;
+let username;
 
 // TODO: add surface capabilities(do you have screen?)
 
@@ -32,8 +35,8 @@ exports.rockPaperScissors = functions.https.onRequest((request, response) => {
     // console.log('Request headers: ' + JSON.stringify(request.headers));
     // console.log('Request body: ' + JSON.stringify(request.body));
 
-
     function welcomeIntentQuestion (app) {
+        clearScore();
         app.ask(`Hi Stranger. You've made great choice. My heroes are waiting to play with You! You will play up to three wins. But first they want to know: what is Your name?`,
             ['I didn\'t hear a name', 'If you\'re still there, what\'s your lucky number?',
                 'We can stop here. Let\'s play again soon. Bye!']);
@@ -63,7 +66,6 @@ exports.rockPaperScissors = functions.https.onRequest((request, response) => {
     }
 
     function heroSelection (app) {
-        let username;
 
         // from context
         if (app.getContextArgument(USER_NAME_CONTEXT, USERNAME_ARGUMENT)) {
@@ -94,18 +96,26 @@ exports.rockPaperScissors = functions.https.onRequest((request, response) => {
     }
 
     function userShoot() {
-        let userShoot = app.getArgument(USER_SHOOT_ARGUMENT); // if stone - will be rock
+        let response;
+        const userShoot = app.getArgument(USER_SHOOT_ARGUMENT); // if stone - will be rock
+        const heroShootObj = getRandomHeroShoot(heroName, imagesInfo);
+        const heroShoot = heroShootObj.text;
+        const score = setScore(userShoot, heroShoot);
 
-        const heroShoot = getRandomHeroShoot(heroName, imagesInfo);
-        const response = `Your shoot is ${userShoot} against ${heroName}'s ${heroShoot.text}`;
+        if (userShoot === heroShoot) {
+            response = `Draw! Your shoot is ${userShoot} the same as ${heroName}'s. Score is still ${score.user}:${score.hero}. Your next shoot!`;
+        } else if (score.user === 3 || score.hero === 3) {
+            let winner = score.user > score.hero? `${username}` : `${heroName}`;
+            response = `Your shoot is ${userShoot} against ${heroName}'s ${heroShoot}. Score now is ${score.user}:${score.hero}. ${winner} is a winner. Do you want to play once again?`;
+        } else {
+            response = `Your shoot is ${userShoot} against ${heroName}'s ${heroShoot}. Score now is ${score.user}:${score.hero}. Your next shoot!`;
+        }
 
         app.ask(app.buildRichResponse()
-            // Create a basic card and add it to the rich response
                 .addSimpleResponse(response)
                 .addBasicCard(app.buildBasicCard()
-                    .setTitle(`${heroName}'s shoot: ${heroShoot.text}`)
-                    .setImage(heroShoot.imageUrl, heroShoot.text)
-                    // .setImageDisplay('CROPPED')
+                    .setTitle(`${heroName}'s shoot: ${heroShoot}. Score: ${score.user}:${score.hero}`)
+                    .setImage(heroShootObj.imageUrl, heroShoot)
                 )
         );
     }
@@ -133,7 +143,7 @@ exports.rockPaperScissors = functions.https.onRequest((request, response) => {
     }
 
     function sayBye (app) {
-        app.tell(`Okay, let's try this again later. You have some time for training. Heroes are waiting for you.`);
+        app.tell(`Okay, let's try this again later. You have some time for training.`);
     }
 
 
