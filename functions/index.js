@@ -26,14 +26,13 @@ const USER_SHOOT_ARGUMENT = 'UserShoot';
 
 let heroName;
 let username;
-
-// TODO: add surface capabilities(do you have screen?)
+let hasScreen;
 
 exports.rockPaperScissors = functions.https.onRequest((request, response) => {
     const app = new App({request, response});
+    hasScreen = app.hasSurfaceCapability(app.SurfaceCapabilities.SCREEN_OUTPUT);
+
     // app.data.fallbackCount = 0;
-    // console.log('Request headers: ' + JSON.stringify(request.headers));
-    // console.log('Request body: ' + JSON.stringify(request.body));
 
     function welcomeIntentQuestion (app) {
         clearScore();
