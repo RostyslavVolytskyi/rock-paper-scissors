@@ -4,7 +4,6 @@ const getRandomHeroShoot = (heroName, arr) => {
     let heroShoot = {};
     arr.forEach(hero => {
         if (hero.heroName === heroName) {
-            console.log('hero', hero);
             heroShoot = getRandomItem(hero.heroShoots);
         }
     });

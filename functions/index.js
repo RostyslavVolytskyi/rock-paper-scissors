@@ -80,19 +80,22 @@ exports.rockPaperScissors = functions.https.onRequest((request, response) => {
         }
 
         if (heroName === 'Cosmic Bug' && username) {
-            // app.ask(`Aha, ${username}, this is ${heroName}. Let's see who has sharper mind! I trained a lot! So, what is your shoot?`);
+
             app.ask(app.buildRichResponse()
-                .addSimpleResponse(`Aha, ${username}, this is ${heroName}. Let's see who has sharper mind! I trained a lot! So, what is your shoot?`)
-                .addSuggestions(['rock', 'paper', 'scissors'])
-            )
+                .addSimpleResponse({
+                    speech: `Aha, ${username}, this is ${heroName}. Let's see who has sharper mind! I trained a lot! So, what is your shoot?`,
+                    displayText: `Aha, ${username}, this is ${heroName}. Let's see who has sharper mind! I trained a lot! So, what is your shoot?`
+                })
+                .addSuggestions(['rock', 'paper', 'scissors']));
         }
 
         if (heroName === 'Fluffy Worm' && username) {
-            // app.ask(`Hi ${username}, this is ${heroName}. Lets play with you. So, what is your shoot?`);
             app.ask(app.buildRichResponse()
-                .addSimpleResponse(`Hi ${username}, this is ${heroName}. Lets play with you. So, what is your shoot?`)
-                .addSuggestions(['rock', 'paper', 'scissors'])
-            )
+                .addSimpleResponse({
+                    speech: `Hi ${username}, this is ${heroName}. Lets play with you. So, what is your shoot?`,
+                    displayText: `Hi ${username}, this is ${heroName}. Lets play with you. So, what is your shoot?`
+                })
+                .addSuggestions(['rock', 'paper', 'scissors']));
         }
 
         if (!heroName) {
@@ -110,22 +113,31 @@ exports.rockPaperScissors = functions.https.onRequest((request, response) => {
         const heroShoot = heroShootObj.text;
         const score = setScore(userShoot, heroShoot);
 
-        if (userShoot === heroShoot) {
-            response = `Draw! Your shoot is ${userShoot} the same as ${heroName}'s. Score is still ${score.user}:${score.hero}. Your next shoot!`;
-        } else if (score.user === 3 || score.hero === 3) {
-            let winner = score.user > score.hero? `${username}` : `${heroName}`;
-            response = `Your shoot is ${userShoot} against ${heroName}'s ${heroShoot}. Score now is ${score.user}:${score.hero}. ${winner} is a winner. Do you want to play once again?`;
-        } else {
-            response = `Your shoot is ${userShoot} against ${heroName}'s ${heroShoot}. Score now is ${score.user}:${score.hero}. Your next shoot!`;
-        }
-
-        app.ask(app.buildRichResponse()
+        const createImage = () => {
+            return app.buildRichResponse()
                 .addSimpleResponse(response)
                 .addBasicCard(app.buildBasicCard()
                     .setTitle(`${heroName}'s shoot: ${heroShoot}. Score: ${score.user}:${score.hero}`)
-                    .setImage(heroShootObj.imageUrl, heroShoot)
-                )
-        );
+                    .setImage(heroShootObj.imageUrl, heroShoot));
+        };
+
+        if (userShoot === heroShoot) {
+
+            response = `Draw! Your shoot is ${userShoot} the same as ${heroName}'s. Score is still ${score.user}:${score.hero}. Your next shoot!`;
+            app.ask(createImage().addSuggestions(['rock', 'paper', 'scissors']));
+
+        } else if (score.user === 3 || score.hero === 3) {
+
+            let winner = score.user > score.hero? `${username}` : `${heroName}`;
+            response = `Your shoot is ${userShoot} against ${heroName}'s ${heroShoot}. Score now is ${score.user}:${score.hero}. ${winner} is a winner. Do you want to play once again?`;
+            app.ask(createImage().addSuggestions(['yes', 'no']));
+
+        } else {
+
+            response = `Your shoot is ${userShoot} against ${heroName}'s ${heroShoot}. Score now is ${score.user}:${score.hero}. Your next shoot!`;
+            app.ask(createImage().addSuggestions(['rock', 'paper', 'scissors']));
+
+        }
     }
 
     function noInput (app) {
@@ -151,9 +163,8 @@ exports.rockPaperScissors = functions.https.onRequest((request, response) => {
     }
 
     function sayBye (app) {
-        app.tell(`Okay, let's try this again later. You have some time for training.`);
+        app.tell(`Okay, let's try this again later.`);
     }
-
 
     let actionMap = new Map();
     actionMap.set(WELCOME_INTENT, welcomeIntentQuestion);
