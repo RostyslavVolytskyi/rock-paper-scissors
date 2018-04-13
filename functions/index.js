@@ -4,6 +4,8 @@ process.env.DEBUG = 'actions-on-google:*';
 const App = require('actions-on-google').DialogflowApp;
 const functions = require('firebase-functions');
 
+const {imagesInfo} = require('./config');
+const {fallbackPhrases} = require('./config');
 
 const WELCOME_INTENT = 'input.welcome';
 const USERNAME_ACTION = 'user.name';
@@ -11,26 +13,6 @@ const DEFAULT_FALLBACK = 'input.unknown';
 const NO_INPUT_EVENT = 'no.input';
 const HERO_SELECTION = 'hero.touch';
 const CANCEL_EVENT = 'say.bye';
-
-
-const IMAGES = {
-    hero1: { url: 'https://firebasestorage.googleapis.com/v0/b/rock-paper-scissors-d9968.appspot.com/o/wait.png?alt=media&token=2816274a-e19d-4aca-8d21-b14fedb14813', heroName: 'Cosmic Bug'},
-    hero2: { url: 'https://firebasestorage.googleapis.com/v0/b/rock-paper-scissors-d9968.appspot.com/o/rsz_minions.jpg?alt=media&token=afb4713b-3efc-439e-a61a-d47d0058b0a1', heroName: 'Fluffy Worm'}
-};
-
-const FALLBACK_PHRASES = [
-    `I missed what you said. Say it again?`,
-    'Sorry, could you say that again?',
-    'Sorry, can you say that again?',
-    'Can you say that again?',
-    `Sorry, I didn't get that.`,
-    'Sorry, what was that?',
-    'One more time?',
-    'What was that?',
-    'Say that again?',
-    `I didn't get that.`,
-    'I missed that.'
-];
 
 const USER_NAME_CONTEXT = 'username_context';
 const USERNAME_ARGUMENT = 'given-name';
@@ -66,16 +48,16 @@ exports.rockPaperScissors = functions.https.onRequest((request, response) => {
 
         app.askWithCarousel(app.buildRichResponse()
             .addSimpleResponse(`Ok, ${username}, now choose with whom You want to play. Cosmic Bug and Fluffy Worm are waiting for You. Play carefully with them, they are very cunning!`)
-            .addSuggestions([IMAGES.hero1.heroName, IMAGES.hero2.heroName]),
+            .addSuggestions([imagesInfo.hero1.heroName, imagesInfo.hero2.heroName]),
             app.buildCarousel()
                 .addItems(app.buildOptionItem('Cosmic Bug',
                     ['cosmic', 'bug', 'buggy', 'cosmic bug'])
-                    .setTitle(IMAGES.hero1.heroName)
-                    .setImage(IMAGES.hero1.url, IMAGES.hero1.heroName))
+                    .setTitle(imagesInfo.hero1.heroName)
+                    .setImage(imagesInfo.hero1.url, imagesInfo.hero1.heroName))
                 .addItems(app.buildOptionItem('Fluffy Worm',
                     ['fluffy', 'worm', 'fluffy worm'])
-                    .setTitle(IMAGES.hero2.heroName)
-                    .setImage(IMAGES.hero2.url, IMAGES.hero2.heroName)
+                    .setTitle(imagesInfo.hero2.heroName)
+                    .setImage(imagesInfo.hero2.url, imagesInfo.hero2.heroName)
                 )
             );
     }
@@ -126,7 +108,7 @@ exports.rockPaperScissors = functions.https.onRequest((request, response) => {
         // console.log('app.getRepromptCount()', app.getRepromptCount());
         // app.data.fallbackCount++;
 
-        app.ask(getRandomPhrase(FALLBACK_PHRASES));
+        app.ask(getRandomPhrase(fallbackPhrases));
 
         if (app.data.fallbackCount === 2) {
             app.tell('Hmm, since I\'m still having trouble, so I\'ll stop here. Let’s play again soon.');
