@@ -50,7 +50,7 @@ exports.rockPaperScissors = functions.https.onRequest((request, response) => {
         app.setContext(USER_NAME_CONTEXT, 100, parameters);
 
         app.askWithCarousel(app.buildRichResponse()
-            .addSimpleResponse(`Ok, ${username}, now choose with whom You want to play. Cosmic Bug and Fluffy Worm are waiting for You. Play carefully with them, they are very cunning!`)
+            .addSimpleResponse(`Ok ${username}, now choose with whom You want to play. Cosmic Bug and Fluffy Worm are waiting for You. Play carefully with them, they are very cunning!`)
             .addSuggestions([imagesInfo[0].heroName, imagesInfo[1].heroName]),
             app.buildCarousel()
                 .addItems(app.buildOptionItem(imagesInfo[0].heroName,
@@ -80,11 +80,21 @@ exports.rockPaperScissors = functions.https.onRequest((request, response) => {
         }
 
         if (heroName === 'Cosmic Bug' && username) {
-            app.ask(`Aha, ${username}, this is ${heroName}. Let's see who has sharper mind! I trained a lot! So, what is your shoot?`);
+            // app.ask(`Aha, ${username}, this is ${heroName}. Let's see who has sharper mind! I trained a lot! So, what is your shoot?`);
+            app.ask(app.buildRichResponse()
+                .addSimpleResponse(`Aha, ${username}, this is ${heroName}. Let's see who has sharper mind! I trained a lot! So, what is your shoot?`)
+                .addSuggestions(['rock', 'paper', 'scissors'])
+                .addSuggestionLink('Suggestion Link', 'https://assistant.google.com/')
+            )
         }
 
         if (heroName === 'Fluffy Worm' && username) {
-            app.ask(`Hi ${username}, this is ${heroName}. Lets play with you. So, what is your shoot?`);
+            // app.ask(`Hi ${username}, this is ${heroName}. Lets play with you. So, what is your shoot?`);
+            app.ask(app.buildRichResponse()
+                .addSimpleResponse(`Hi ${username}, this is ${heroName}. Lets play with you. So, what is your shoot?`)
+                .addSuggestions(['rock', 'paper', 'scissors'])
+                .addSuggestionLink('Suggestion Link', 'https://assistant.google.com/')
+            )
         }
 
         if (!heroName) {
