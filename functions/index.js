@@ -84,7 +84,6 @@ exports.rockPaperScissors = functions.https.onRequest((request, response) => {
             app.ask(app.buildRichResponse()
                 .addSimpleResponse(`Aha, ${username}, this is ${heroName}. Let's see who has sharper mind! I trained a lot! So, what is your shoot?`)
                 .addSuggestions(['rock', 'paper', 'scissors'])
-                .addSuggestionLink('Suggestion Link', 'https://assistant.google.com/')
             )
         }
 
@@ -93,7 +92,6 @@ exports.rockPaperScissors = functions.https.onRequest((request, response) => {
             app.ask(app.buildRichResponse()
                 .addSimpleResponse(`Hi ${username}, this is ${heroName}. Lets play with you. So, what is your shoot?`)
                 .addSuggestions(['rock', 'paper', 'scissors'])
-                .addSuggestionLink('Suggestion Link', 'https://assistant.google.com/')
             )
         }
 
