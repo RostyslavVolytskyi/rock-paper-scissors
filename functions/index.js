@@ -6,6 +6,8 @@ const functions = require('firebase-functions');
 
 const {imagesInfo} = require('./config');
 const {fallbackPhrases} = require('./config');
+const {getRandomItem} = require('./utils');
+const {getRandomHeroShoot} = require('./utils');
 
 const WELCOME_INTENT = 'input.welcome';
 const USERNAME_ACTION = 'user.name';
@@ -13,16 +15,14 @@ const DEFAULT_FALLBACK = 'input.unknown';
 const NO_INPUT_EVENT = 'no.input';
 const HERO_SELECTION = 'hero.touch';
 const CANCEL_EVENT = 'say.bye';
+const USER_SHOOT_EVENT = 'user.shoot';
 
 const USER_NAME_CONTEXT = 'username_context';
 const USERNAME_ARGUMENT = 'given-name';
 const HERONAME_ARGUMENT = 'Hero';
+const USER_SHOOT_ARGUMENT = 'UserShoot';
 
-
-function getRandomPhrase(arr) {
-    return arr[Math.floor(Math.random()*arr.length)];
-}
-
+let heroName;
 
 // TODO: add surface capabilities(do you have screen?)
 
@@ -48,16 +48,16 @@ exports.rockPaperScissors = functions.https.onRequest((request, response) => {
 
         app.askWithCarousel(app.buildRichResponse()
             .addSimpleResponse(`Ok, ${username}, now choose with whom You want to play. Cosmic Bug and Fluffy Worm are waiting for You. Play carefully with them, they are very cunning!`)
-            .addSuggestions([imagesInfo.hero1.heroName, imagesInfo.hero2.heroName]),
+            .addSuggestions([imagesInfo[0].heroName, imagesInfo[1].heroName]),
             app.buildCarousel()
-                .addItems(app.buildOptionItem('Cosmic Bug',
+                .addItems(app.buildOptionItem(imagesInfo[0].heroName,
                     ['cosmic', 'bug', 'buggy', 'cosmic bug'])
-                    .setTitle(imagesInfo.hero1.heroName)
-                    .setImage(imagesInfo.hero1.url, imagesInfo.hero1.heroName))
-                .addItems(app.buildOptionItem('Fluffy Worm',
+                    .setTitle(imagesInfo[0].heroName)
+                    .setImage(imagesInfo[0].url, imagesInfo[0].heroName))
+                .addItems(app.buildOptionItem(imagesInfo[1].heroName,
                     ['fluffy', 'worm', 'fluffy worm'])
-                    .setTitle(imagesInfo.hero2.heroName)
-                    .setImage(imagesInfo.hero2.url, imagesInfo.hero2.heroName)
+                    .setTitle(imagesInfo[1].heroName)
+                    .setImage(imagesInfo[1].url, imagesInfo[1].heroName)
                 )
             );
     }
@@ -70,7 +70,7 @@ exports.rockPaperScissors = functions.https.onRequest((request, response) => {
             username = app.getContextArgument(USER_NAME_CONTEXT, USERNAME_ARGUMENT).value;
         }
 
-        let heroName = app.getSelectedOption();
+        heroName = app.getSelectedOption();
 
         if (!heroName) {
             // from user
@@ -82,7 +82,7 @@ exports.rockPaperScissors = functions.https.onRequest((request, response) => {
         }
 
         if (heroName === 'Fluffy Worm' && username) {
-            app.ask(`Hi ${username}, this is ${heroName}. Lets play with you. To be continued.`);
+            app.ask(`Hi ${username}, this is ${heroName}. Lets play with you. So, what is your shoot?`);
         }
 
         if (!heroName) {
@@ -91,6 +91,23 @@ exports.rockPaperScissors = functions.https.onRequest((request, response) => {
             app.ask('You selected an unknown item from the list or carousel');
         }
 
+    }
+
+    function userShoot() {
+        let userShoot = app.getArgument(USER_SHOOT_ARGUMENT); // if stone - will be rock
+
+        const heroShoot = getRandomHeroShoot(heroName, imagesInfo);
+        const response = `Your shoot is ${userShoot} against ${heroName}'s ${heroShoot.text}`;
+
+        app.ask(app.buildRichResponse()
+            // Create a basic card and add it to the rich response
+                .addSimpleResponse(response)
+                .addBasicCard(app.buildBasicCard()
+                    .setTitle(`${heroName}'s shoot: ${heroShoot.text}`)
+                    .setImage(heroShoot.imageUrl, heroShoot.text)
+                    // .setImageDisplay('CROPPED')
+                )
+        );
     }
 
     function noInput (app) {
@@ -108,7 +125,7 @@ exports.rockPaperScissors = functions.https.onRequest((request, response) => {
         // console.log('app.getRepromptCount()', app.getRepromptCount());
         // app.data.fallbackCount++;
 
-        app.ask(getRandomPhrase(fallbackPhrases));
+        app.ask(getRandomItem(fallbackPhrases));
 
         if (app.data.fallbackCount === 2) {
             app.tell('Hmm, since I\'m still having trouble, so I\'ll stop here. Let’s play again soon.');
@@ -124,6 +141,7 @@ exports.rockPaperScissors = functions.https.onRequest((request, response) => {
     actionMap.set(WELCOME_INTENT, welcomeIntentQuestion);
     actionMap.set(USERNAME_ACTION, createName);
     actionMap.set(HERO_SELECTION, heroSelection);
+    actionMap.set(USER_SHOOT_EVENT, userShoot);
 
     actionMap.set(DEFAULT_FALLBACK, defaultFallback);
     actionMap.set(NO_INPUT_EVENT, noInput);
