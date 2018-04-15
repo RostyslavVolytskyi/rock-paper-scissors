@@ -20,13 +20,14 @@ const CANCEL_EVENT = 'say.bye';
 const USER_SHOOT_EVENT = 'user.shoot';
 const PLAY_ONCE_AGAIN_EVENT = 'play.once.again';
 
-const USER_NAME_CONTEXT = 'username_context';
+const CREATE_USERNAME_CONTEXT = 'create_username_context';
 const USERNAME_ARGUMENT = 'given-name';
 
 const HERONAME_ARGUMENT = 'Hero';
 const USER_SHOOT_ARGUMENT = 'UserShoot';
 
-const YES_OR_NO_CONTEXT = 'yes_or_no';
+// const YES_OR_NO_CONTEXT = 'yes_or_no_context';
+const HERO_SELECTION_CONTEXT = 'hero_selection_context';
 const YES_OR_NO_ARGUMENT = 'PlayOnceAgain';
 
 let heroName;
@@ -40,7 +41,7 @@ exports.rockPaperScissors = functions.https.onRequest((request, response) => {
     // app.data.fallbackCount = 0;
 
     function welcomeIntentQuestion (app) {
-        app.setContext(USER_NAME_CONTEXT, 1000000);
+        app.setContext(CREATE_USERNAME_CONTEXT, 1); // Output context with lifespan=1 (in DialogFlow create the same input context for next intent to be triggered)
         app.ask(`Hi Stranger. You've made great choice. My heroes are waiting to play with You! You will play up to three wins. But first they want to know: what is Your name?`,
             ['I didn\'t hear a name', 'If you\'re still there, what\'s your name?',
                 'We can stop here. Let\'s play again soon. Bye!']);
@@ -48,10 +49,8 @@ exports.rockPaperScissors = functions.https.onRequest((request, response) => {
 
     function createName (app) {
         clearScore();
-        console.log('app.getContextArgument(YES_OR_NO_CONTEXT, YES_OR_NO_ARGUMENT)', app.getContextArgument(YES_OR_NO_CONTEXT, YES_OR_NO_ARGUMENT));
-        console.log('app.getContexts()', app.getContexts());
 
-        username = app.getContextArgument(USER_NAME_CONTEXT, USERNAME_ARGUMENT).original;
+        username = app.getContextArgument(CREATE_USERNAME_CONTEXT, USERNAME_ARGUMENT).original;
 
 
         app.askWithCarousel(app.buildRichResponse()
@@ -141,10 +140,6 @@ exports.rockPaperScissors = functions.https.onRequest((request, response) => {
 
     function playOnceAgain(app) {
         const yesOrNo = app.getArgument(YES_OR_NO_ARGUMENT);
-
-        // const parameters = {};
-        // parameters[YES_OR_NO_ARGUMENT] = yesOrNo;
-        // app.setContext(YES_OR_NO_CONTEXT, 6, parameters);
 
         if( yesOrNo === 'yes') {
             createName(app);
