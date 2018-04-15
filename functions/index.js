@@ -48,13 +48,23 @@ exports.rockPaperScissors = functions.https.onRequest((request, response) => {
     }
 
     function createName (app) {
+        let response;
         clearScore();
 
-        username = app.getContextArgument(CREATE_USERNAME_CONTEXT, USERNAME_ARGUMENT).original;
 
-
+        if(!username) {
+            // In dialogflow we set input context CREATE_USERNAME_CONTEXT
+            username = app.getContextArgument(CREATE_USERNAME_CONTEXT, USERNAME_ARGUMENT).original;
+            response = `Ok ${username}, now choose with whom You want to play. Cosmic Bug and Fluffy Worm are waiting for You. Play carefully with them, they are very cunning!`;
+        } else {
+            // if we play once again
+            const prevHero = heroName;
+            let newHero = prevHero === imagesInfo[0].heroName ? imagesInfo[1].heroName : imagesInfo[0].heroName;
+            response = `Ok ${username}, let's play once again. ${newHero} is waiting to play with you, but if you want you can give match revanche to ${prevHero}. Choose with whom You want to play.`;
+        }
+        
         app.askWithCarousel(app.buildRichResponse()
-            .addSimpleResponse(`Ok ${username}, now choose with whom You want to play. Cosmic Bug and Fluffy Worm are waiting for You. Play carefully with them, they are very cunning!`)
+            .addSimpleResponse(response)
             .addSuggestions([imagesInfo[0].heroName, imagesInfo[1].heroName]),
             app.buildCarousel()
                 .addItems(app.buildOptionItem(imagesInfo[0].heroName,
@@ -81,8 +91,8 @@ exports.rockPaperScissors = functions.https.onRequest((request, response) => {
 
             app.ask(app.buildRichResponse()
                 .addSimpleResponse({
-                    speech: `Aha, ${username}, this is ${heroName}. Let's see who has sharper mind! I trained a lot! So, what is your shoot?`,
-                    displayText: `Aha, ${username}, this is ${heroName}. Let's see who has sharper mind! I trained a lot! So, what is your shoot?`
+                    speech: `Aha ${username}, this is ${heroName}. Let's see who has sharper mind! I trained a lot! So, what is your shoot?`,
+                    displayText: `Aha ${username}, this is ${heroName}. Let's see who has sharper mind! I trained a lot! So, what is your shoot?`
                 })
                 .addSuggestions(['rock', 'paper', 'scissors']));
         }
