@@ -18,11 +18,16 @@ const NO_INPUT_EVENT = 'no.input';
 const HERO_SELECTION = 'hero.touch';
 const CANCEL_EVENT = 'say.bye';
 const USER_SHOOT_EVENT = 'user.shoot';
+const PLAY_ONCE_AGAIN_EVENT = 'play.once.again';
 
 const USER_NAME_CONTEXT = 'username_context';
 const USERNAME_ARGUMENT = 'given-name';
+
 const HERONAME_ARGUMENT = 'Hero';
 const USER_SHOOT_ARGUMENT = 'UserShoot';
+
+const YES_OR_NO_CONTEXT = 'yes_or_no';
+const YES_OR_NO_ARGUMENT = 'PlayOnceAgain';
 
 let heroName;
 let username;
@@ -35,18 +40,19 @@ exports.rockPaperScissors = functions.https.onRequest((request, response) => {
     // app.data.fallbackCount = 0;
 
     function welcomeIntentQuestion (app) {
-        clearScore();
+        app.setContext(USER_NAME_CONTEXT, 1000000);
         app.ask(`Hi Stranger. You've made great choice. My heroes are waiting to play with You! You will play up to three wins. But first they want to know: what is Your name?`,
-            ['I didn\'t hear a name', 'If you\'re still there, what\'s your lucky number?',
+            ['I didn\'t hear a name', 'If you\'re still there, what\'s your name?',
                 'We can stop here. Let\'s play again soon. Bye!']);
     }
 
     function createName (app) {
-        const username = app.getArgument(USERNAME_ARGUMENT);
+        clearScore();
+        console.log('app.getContextArgument(YES_OR_NO_CONTEXT, YES_OR_NO_ARGUMENT)', app.getContextArgument(YES_OR_NO_CONTEXT, YES_OR_NO_ARGUMENT));
+        console.log('app.getContexts()', app.getContexts());
 
-        const parameters = {};
-        parameters[USERNAME_ARGUMENT] = username;
-        app.setContext(USER_NAME_CONTEXT, 100, parameters);
+        username = app.getContextArgument(USER_NAME_CONTEXT, USERNAME_ARGUMENT).original;
+
 
         app.askWithCarousel(app.buildRichResponse()
             .addSimpleResponse(`Ok ${username}, now choose with whom You want to play. Cosmic Bug and Fluffy Worm are waiting for You. Play carefully with them, they are very cunning!`)
@@ -65,12 +71,6 @@ exports.rockPaperScissors = functions.https.onRequest((request, response) => {
     }
 
     function heroSelection (app) {
-
-        // from context
-        if (app.getContextArgument(USER_NAME_CONTEXT, USERNAME_ARGUMENT)) {
-            username = app.getContextArgument(USER_NAME_CONTEXT, USERNAME_ARGUMENT).value;
-        }
-
         heroName = app.getSelectedOption();
 
         if (!heroName) {
@@ -139,6 +139,20 @@ exports.rockPaperScissors = functions.https.onRequest((request, response) => {
         }
     }
 
+    function playOnceAgain(app) {
+        const yesOrNo = app.getArgument(YES_OR_NO_ARGUMENT);
+
+        // const parameters = {};
+        // parameters[YES_OR_NO_ARGUMENT] = yesOrNo;
+        // app.setContext(YES_OR_NO_CONTEXT, 6, parameters);
+
+        if( yesOrNo === 'yes') {
+            createName(app);
+        } else {
+            app.tell(`Okay see You later!`)
+        }
+    }
+
     function noInput (app) {
         if (app.getRepromptCount() === 0) {
             app.ask(`What was that?`);
@@ -170,6 +184,8 @@ exports.rockPaperScissors = functions.https.onRequest((request, response) => {
     actionMap.set(USERNAME_ACTION, createName);
     actionMap.set(HERO_SELECTION, heroSelection);
     actionMap.set(USER_SHOOT_EVENT, userShoot);
+    actionMap.set(USER_SHOOT_EVENT, userShoot);
+    actionMap.set(PLAY_ONCE_AGAIN_EVENT, playOnceAgain);
 
     actionMap.set(DEFAULT_FALLBACK, defaultFallback);
     actionMap.set(NO_INPUT_EVENT, noInput);
